@@ -113,26 +113,27 @@ await은 async 내에서만 사용 가능한데, 프로미스가 이행될 때�
 > async /await 예시
 
 ```
-function functionName(){}
-const myPromise = new Promise((resolve, reject) => {
-    // 비동기 작업 수행 설정
-    // resolve(value) = 작업 성공시 호출
-    // reject(err) = 작업 실패시 호출
-    if(condition){
-        resolve(value);
-    }
-    else{
-        reject(err);
-    }
-});
-async myPromiseAsync(){
-    try{
-        const data = await functionName(); // functionName 작업완료까지 대기
-        // 대기 이후 추가 작업 수행
-    } catch (err) {
-        // 실패시 실행되는 코드
-    } finally{
-        // 작업 완료 이후 언제나 실행되는 코드
+function functionName(){
+    const myPromise = new Promise((resolve, reject) => {
+        // 비동기 작업 수행 설정
+        // resolve(value) = 작업 성공시 호출
+        // reject(err) = 작업 실패시 호출
+        if(condition){
+            resolve(value);
+        }
+        else{
+            reject(err);
+        }
+    });
+    async myPromiseAsync(){
+        try{
+            const data = await functionName(); // functionName 작업완료까지 대기
+            // 대기 이후 추가 작업 수행
+        } catch (err) {
+            // 실패시 실행되는 코드
+        } finally{
+            // 작업 완료 이후 언제나 실행되는 코드
+        }
     }
 }
 ```
