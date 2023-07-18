@@ -2,7 +2,7 @@
 layout: post
 title: 🏰RESTful API
 date: 2023-06-27
-categories: ["SamBeak", "First Post", "RESTful API", "API"]
+categories: ["SamBeak", "REST API", "RESTful API", "API"]
 ---
 
 # RESTful API : 웹 개발에서 필수적인 아키덱처 스타일
