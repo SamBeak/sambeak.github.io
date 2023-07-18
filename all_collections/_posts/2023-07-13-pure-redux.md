@@ -2,7 +2,7 @@
 layout: post
 title: 🌧 Pure Redux
 date: 2023-07-13
-categories: ["SamBeak", "Pure Redux", "Redux", "Vanilla JavaScript"]
+categories: ["SamBeak", "Pure Redux", "Redux", "JavaScript"]
 ---
 
 > # Arcitecture

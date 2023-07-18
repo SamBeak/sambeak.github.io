@@ -3,7 +3,15 @@ layout: post
 title: ⌛️ 동기 모델과 비동기 모델
 date: 2023-06-23
 categories:
-  ["SamBeak", "Asynchronous", "Synchronous", "Model", "비동기", "동기"]
+  [
+    "SamBeak",
+    "Asynchronous",
+    "Synchronous",
+    "Model",
+    "비동기",
+    "동기",
+    "JavaScript",
+  ]
 ---
 
 > # 동기와 비동기가 무슨 말이야?
