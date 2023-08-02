@@ -38,3 +38,129 @@ CALL STACK이 0순위, MICROTASK QUEUE가 1순위, <br>
 MACROTASK QUEUE가 2순위인셈이고 <br>
 결국 우리가 하고자하는 것은 콜스택으로 처리하기 위해 <br>
 Promise나 Async/Await처리를 하는 것이다. <br><br>
+
+> # 기존 문법의 수정
+
+<br>
+
+Async/Await을 쓰지 않을 때와 사용할 때의 문법 차이는 아래와 같다.
+
+# Before
+
+```JavaScript
+const pool = mysql.createPool({
+    host: "",
+    user: "admin",
+    password: "",
+    port: 3306,
+    database: "db_name",
+  });
+function getNotes(){
+    pool.query(`select BIN_TO_UUID(uuid,true) as uuid,title,contents,created from notes);`, function (err, results, fields) {
+    console.log(results);
+    });
+};
+```
+
+# After
+
+```JavaScript
+const pool = mysql.createPool({
+    host: "",
+    user: "admin",
+    password: "",
+    port: 3306,
+    database: "db_name",
+  })
+  .promise();
+
+export async function getNotes(){
+    const [rows] = awit pool.query(`select BIN_TO_UUID(uuid,true) as uuid,title,contents,created from notes);`);
+    return rows
+};
+```
+
+DB에 대한 풀 쿼리를 정리했다면, <br>
+index나 db 풀 쿼리를 사용하고자하는 위치가 있을 것 아닌가 <br>
+그 곳에 module로 해당 쿼리를 불러오고 <br>
+사용하면 된다. <br><br>
+
+```JavaScript
+import express from "express";
+import { getNotesAsync, getNoteAsync, addNotesAsync, updateNoteAsync, deleteNoteAsync } from "./database2.js";
+
+const app = express()
+const port = 3000
+
+// body 처리를 위한 미들웨어 설정
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.get('/notes', async (req, res) => {
+  const result = await getNotesAsync();
+  res.send(result);
+});
+
+app.get('/note/:id', async (req, res, next) => {
+  try{
+    const id = req.params.id;
+    if(!id) throw new Error('400@No Path Parameter');
+    const result = await getNoteAsync(id);
+    if(!result) res.send({});
+    if(result.length === 0) res.send({});
+    res.send(result[0]);
+  }
+  catch(err){
+    next(err);
+  }
+});
+
+app.get('/notes', async (req, res, next) => {
+  const body = req.body;
+  if(!body.title) sendStatus(400);
+  if(!body.contents) sendStatus(400);
+  const result = await addNotesAsync(body.title, body.contents);
+  if(typeof result.affectedRows === "undefined") throw new Error(`400@Not created`);
+  if(typeof result.affectedRows !== 1) throw new Error(`400@Not created`);
+  res.sendStatus(201);
+});
+
+app.use((err, req, res, next) => {
+  console.log(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+});
+
+```
+
+> # body처리
+
+<br>
+POST를 만들 때, body를 처리하기 위해서는 미들웨어가 필요하다. <br>
+Express 공식문서는 이를 위해 두 가지 미들웨어를 추가하라고한다. <br>
+
+```JavaScript
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+```
+
+> # 에러처리
+
+<br>
+
+Express 공식문서에 에러 핸들링에 대한 부분도 참고 할 수 있는데 <br>
+아래처럼 추가해 사용하라 명시한다. <br>
+
+```JavaScript
+app.use((err, req, res, next) => {
+  console.log(err.stack);
+  res.status(500).send('Something broke!');
+});
+```
