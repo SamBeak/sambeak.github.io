@@ -86,6 +86,15 @@ docker run -d -p 4000:80 nginx
 
 ```
 
+🏷️ 컨테이너 내부 접속 <br>
+
+```bash
+# docker exec -it containerId bash
+# exit 나가기
+docker exec -it d32 bash
+exit
+```
+
 🏷️ 컨테이너 환경 변수 설정 실행 <br>
 
 ```bash
